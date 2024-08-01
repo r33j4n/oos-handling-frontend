@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import './ChatInterface.css';
 
 const ChatInterface = () => {
@@ -21,7 +22,7 @@ const ChatInterface = () => {
       const oosNotHandledMessage = { type: 'bot', content: oosNotHandledResponse.data.response.response };
       setOosNotHandledChat(prev => [...prev, oosNotHandledMessage]);
 
-      // Only after receiving the response from the first API, send request to the second API
+      // OOS Handled API call
       const oosHandledResponse = await axios.post('http://127.0.0.1:5000/query-rag', { query_text: inputText });
       const oosHandledMessage = { type: 'bot', content: oosHandledResponse.data.response.response };
       setOosHandledChat(prev => [...prev, oosHandledMessage]);
@@ -39,7 +40,11 @@ const ChatInterface = () => {
       <div className="chat-messages">
         {chatMessages.map((msg, index) => (
           <div key={index} className={`message ${msg.type}`}>
-            {msg.content}
+            {msg.type === 'bot' ? (
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
+            ) : (
+              msg.content
+            )}
           </div>
         ))}
       </div>
